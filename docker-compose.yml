@@ -1,0 +1,20 @@
+# MAC Linux version. command: docker-compose up
+services:
+  web:
+    build: .
+    tty: true
+    ports:
+      - 9010:80
+    volumes:
+      - ./app:/var/www/html/
+      - ./app/.htaccess:/var/www/html/.htaccess
+      - ./src:/var/www/html/src
+  mysql:
+    image: mysql:8.0
+    tty: true
+    ports:
+      - 3306:3306
+    volumes:
+      - ./src/dbscripts/user-sql-dump.sql:/docker-entrypoint-initdb.d/0_init.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysqlpass
