@@ -8,9 +8,11 @@ namespace Users\Models;
 class DBModel
 {
     /** @var array */
-    protected array $errors;
+    protected array $errors = [];
     /** @var AdapterInterface */
     protected $storage_adapter;
+    /** @var string */
+    public $scenario;
 
     /**
      * DBModel constructor.
@@ -73,13 +75,22 @@ class DBModel
      */
     public function validate(): bool
     {
+        $result = true;
         $rules = $this->validationRules();
         foreach ($rules as $rule) {
-            //create validator and validate field
-            //if error then to add it to model's errors
+            if (isset($rule[1])) {
+                $class = 'Users\\Validators' . '\\' . ucfirst($rule[1]) . 'Validator';
+                if (class_exists($class)) {
+                    if (!isset($rule['on']) || in_array($this->scenario, $rule['on'])) {
+                        $result = $result && (new $class)->validate($this, $rule);
+                    }
+                } else {
+                    // trow Exception
+                }
+            }
         }
 
-        return true;
+        return $result;
     }
 
     /**
@@ -139,5 +150,34 @@ class DBModel
     public function getDBAttributes(): array
     {
         return [];
+    }
+
+    /**
+     * @param $attribute
+     * @param $message
+     *
+     * @return void
+     */
+    public function addError($attribute, $message): void
+    {
+        $this->errors[$attribute] = $message;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @param string $attribute
+     *
+     * @return string
+     */
+    public function getError(string $attribute): string
+    {
+        return $this->errors[$attribute] ?? '';
     }
 }

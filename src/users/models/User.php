@@ -52,28 +52,27 @@ class User extends DBModel
      */
     public function validationRules(): array
     {
-        // NOTE: you should only define rules for those attributes that
-        // will receive user inputs.
+        // NOTE: not all rules are implemented
         return [
             [
-                'password, password1, firstname, lastname, email',
+                'firstname, lastname, email',
                 'filter',
                 'filter' => 'trim',
             ],
             ['email', 'filter', 'filter' => 'mb_strtolower'],
-            ['email', 'required'],
+            ['email, firstname, lastname, role', 'required'],
             ['email', 'email'],
             ['email', 'unique'],
-            ['password', 'match', 'pattern' => 'regExp'],
-            ['password, firstname, lastname, email', 'length', 'max' => 128],
-            ['password', 'length', 'min' => 8],
-            ['password1', 'equal', 'compareAttribute' => 'password'],
+            // not implemented
+            ['password', 'required', 'on' => ['create', 'reset']],
+            ['password', 'match', 'pattern' => '/^[a-zA-Z0-9]{8,128}$/', 'on' => ['create', 'reset']],
+            //simple password without special characters
+            ['password1', 'equal', 'compareAttribute' => 'password', 'on' => ['create', 'reset']],
+            ['firstname, lastname, email', 'length', 'max' => 128],
             ['state', 'numerical', 'integerOnly' => true],
+            // not implemented
             ['firstname, lastname', 'TextFieldValidator', 'noHTML' => true],
-            [
-                'firstname, lastname',
-                'safe',
-            ],
+            // not implemented
         ];
     }
 
@@ -89,6 +88,33 @@ class User extends DBModel
             if (in_array($attribute, ['email', 'password_hash', 'firstname', 'lastname', 'state', 'role',])) {
                 $result[$attribute] = $value;
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param int $state
+     *
+     * @return string
+     */
+    public static function getStateLabel(int $state): string
+    {
+        switch ($state) {
+            case 0:
+                $result = 'New';
+                break;
+            case 1:
+                $result = 'Active';
+                break;
+            case 2:
+                $result = 'Blocked';
+                break;
+            case 3:
+                $result = 'Deleted';
+                break;
+            default:
+                $result = 'Unknown';
         }
 
         return $result;

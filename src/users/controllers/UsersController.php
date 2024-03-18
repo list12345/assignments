@@ -82,6 +82,7 @@ class UsersController
         $model = new User();
         if ($model->load($_POST)) {
             $model->state = User::STATE_NEW;
+            $model->scenario = 'create';
             if ($model->validate()) {
                 /** simple md5 */
                 $model->password_hash = md5($model->password . User::SALT);
@@ -111,6 +112,7 @@ class UsersController
         $model = $this->findModel($id);
         if ($model->load($_POST) && $model->validate()) {
             if ($model->save()) {
+                // if success
                 return $this->redirect(['list']);
             }
         }
@@ -170,8 +172,10 @@ class UsersController
      *
      * @return string
      */
-    public function redirect(array $route): string
+    public function redirect(array $route): void
     {
-        return '';
+        ob_start();
+        header('Location: ' . $route[0] ?? ''); // need to add params
+        ob_end_flush();
     }
 }
