@@ -53,23 +53,30 @@ http://localhost:9010/user/delete?id=2&auth_role=guest - not authorized
 2. Using PDO statements to avoid sql injections.
 
 ## Dependency injection
-It could be done for example for database adapters.
+1. Setter Dependency Injection
 
-Defining AdapterInterface in di-container.php as MySQLAdapter:
-```php
- \Users\models\AdapterInterface::class => function (\DI\Container $container) {
-        // 'connection_string', 'username', 'password' could be defined as ENV variables, then use getenv('MYSQL_PASSWORD') here
+   It's done in app/user.php lines 17-18
+   
+2. Constructor Dependency Injection (__not done in this assignment__)
+
+   It could be done for example for database adapters.
+
+   Defining AdapterInterface in di-container.php as MySQLAdapter:
+   ```php
+        \Users\models\AdapterInterface::class => function (\DI\Container $container) {
+        // 'connection_string', 'username', 'password' could be defined as ENV variables,
+        // and call them by getenv(), e.g. getenv('MYSQL_PASSWORD') here
         return new Users\models\MySQLAdapter('connection_string', 'username', 'password'); 
- },
-```
-Then inside DBComponent
-```php
+        },
+    ```
+    Then inside DBComponent
+   ```php
  
-    public function __construct(\Users\models\AdapterInterface $storage_adapter)
-    {
-        $this->storage_adapter = $storage_adapter;
-    }
-```
+       public function __construct(\Users\models\AdapterInterface $storage_adapter)
+       {
+           $this->storage_adapter = $storage_adapter;
+       }
+   ```
 
 ## Inheritance Principle
 User class is a child of class DBModel. DBModel provides communication with database, validation processing, error handling.
