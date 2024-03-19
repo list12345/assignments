@@ -19,11 +19,10 @@ $controller = new \Users\Controllers\UsersController();
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
 
 // It should be login-logout actions in another controller with authentication check (salt, oauth, saml).
-// However, take shortcut here
-// user could be admin, or just user, or guest by using 'auth_role' param
+// However, take shortcut here - imitate logged user
+// It could be admin, or just user, or guest by using 'auth_role' param
 $logged_user = new \Users\Models\User();
-$logged_user->role = $_GET['auth_role'];
-
+$logged_user->role = $_GET['auth_role'] ?? null;
 $_SESSION['user'] = $logged_user;
 
 // shortcut for routes

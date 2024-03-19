@@ -17,7 +17,7 @@ class MySQLAdapter implements AdapterInterface
     public function __construct()
     {
         try {
-            $this->pdo = new \PDO("mysql:host=192.168.192.1;port=3306;dbname=testdb", 'root', 'mysqlpass');
+            $this->pdo = new \PDO("mysql:host=mysql;port=3306;dbname=testdb", 'root', 'mysqlpass');
         } catch (\PDOException $pe) {
             die ("Could not connect to the database testdb:" . $pe->getMessage());
         }

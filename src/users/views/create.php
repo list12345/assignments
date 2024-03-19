@@ -16,7 +16,8 @@ $model = $params['model'] ?? new \Users\Models\User();
 ?>
 
 <p><span class="error">* Required field</span></p>
-<form method="post" action="<?php echo htmlspecialchars('/user/create'); ?>">
+<form method="post" action="<?php echo htmlspecialchars('/user/create' .
+    ($_SESSION['user'] instanceof \Users\Models\User ? '?auth_role=' .($_SESSION['user'])->role : '')); ?>">
     <label>First Name:
         <input type="text" name="firstname" value="<?php echo $model->firstname; ?>">
     </label>

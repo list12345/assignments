@@ -18,7 +18,8 @@ $model = $params['model'] ?? new \Users\Models\User();
 ?>
 
 <p><span class="error">* required field</span></p>
-<form method="post" action="<?php echo htmlspecialchars('/user/update?id=' . $model->id); ?>">
+<form method="post" action="<?php echo htmlspecialchars('/user/update?id=' . $model->id .
+    ($_SESSION['user'] instanceof \Users\Models\User ? '&auth_role=' .($_SESSION['user'])->role : '')); ?>">
     <label>First Name:
         <input type="text" name="firstname" value="<?php echo $model->firstname; ?>">
     </label>
@@ -49,7 +50,8 @@ $model = $params['model'] ?? new \Users\Models\User();
     <br><br>
     <input type="submit" value="Update">
     <?php if ($model->state != 3) { ?>
-        <button onclick="location.href='/user/delete?id=<?php echo $model->id; ?>'" type="button">
+        <button onclick="location.href='/user/delete?id=<?php echo $model->id; ?><?php echo ($_SESSION['user'] instanceof \Users\Models\User ?
+            '&auth_role=' .($_SESSION['user'])->role : ''); ?>'" type="button">
             Delete
         </button>
     <?php } ?>

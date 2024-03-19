@@ -10,6 +10,14 @@
 </head>
 <body>
 
+<?php if ($_SESSION['user'] instanceof \Users\Models\User && ($_SESSION['user'])->role == 'admin') { ?>
+    <button onclick="location.href='create?auth_role=admin'" type="button">
+        Create New User
+    </button>
+<?php } ?>
+
+<br><br>
+
 <?php
 /** @var $params */
 $attributes = ['id', 'email', 'firstname', 'lastname', 'state', 'role'];
@@ -31,7 +39,8 @@ if (isset($params['rows']) && is_array($params['rows'])) {
                 }
             } ?>
             <td>
-                <button onclick="location.href='/user/update?id=<?php echo $model['id']; ?>'" type="button">
+                <button onclick="location.href='/user/update?id=<?php echo $model['id']; ?><?php echo ($_SESSION['user'] instanceof \Users\Models\User ?
+                    '&auth_role=' .($_SESSION['user'])->role : ''); ?>'" type="button">
                     Update
                 </button>
             </td>

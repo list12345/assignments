@@ -33,7 +33,7 @@ class UsersController
         $user = $_SESSION['user'];
         $permissions = $this->permissions();
         $role = $user instanceof User ? $user->role : 'guest';
-        if (!in_array($action, $permissions[$role])) {
+        if (!in_array($action, $permissions[$role] ?? [])) {
             throw new \Exception('Not Authorize');
         }
     }
@@ -87,7 +87,7 @@ class UsersController
                 /** simple md5 */
                 $model->password_hash = md5($model->password . User::SALT);
                 if ($model->save()) {
-                    return $this->redirect(['list']);
+                    $this->redirect(['list']);
                 }
             }
         }
@@ -113,7 +113,7 @@ class UsersController
         if ($model->load($_POST) && $model->validate()) {
             if ($model->save()) {
                 // if success
-                return $this->redirect(['list']);
+                $this->redirect(['list']);
             }
         }
 
@@ -135,7 +135,7 @@ class UsersController
         // soft deletion
         $model->state = User::STATE_DELETED;
         if ($model->save()) {
-            return $this->redirect(['list']);
+            $this->redirect(['list']);
         }
         throw new \Exception('Internal Error', 500);
     }
@@ -170,12 +170,19 @@ class UsersController
     /**
      * @param array $route
      *
-     * @return string
+     * @return void
      */
     public function redirect(array $route): void
     {
         ob_start();
-        header('Location: ' . $route[0] ?? ''); // need to add params
+        $url = $route[0] ?? '';
+        if ($_SESSION['user'] instanceof \Users\Models\User) {
+            $route[1]['auth_role'] .= ($_SESSION['user'])->role;
+        }
+        if (isset($route[1])) {
+            $url .= '?' . http_build_query($route[1]);
+        }
+        header('Location: ' . htmlspecialchars($url));
         ob_end_flush();
     }
 }
