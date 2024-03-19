@@ -14,6 +14,8 @@ foreach (scandir($root_folder . 'src/users') as $filename) {
         }
     }
 }
+\Users\Models\DBComponent::$db = new \Users\Models\DBComponent();
+\Users\Models\DBComponent::$db->setStorageAdapter(new \Users\Models\MySQLAdapter());
 
 $controller = new \Users\Controllers\UsersController();
 $uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);

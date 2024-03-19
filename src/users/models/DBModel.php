@@ -9,17 +9,18 @@ class DBModel
 {
     /** @var array */
     protected array $errors = [];
-    /** @var AdapterInterface */
-    protected $storage_adapter;
     /** @var string */
     public $scenario;
+    /** @var DBComponent */
+    protected static $db;
 
     /**
      * DBModel constructor.
      */
     public function __construct()
     {
-        $this->storage_adapter = new MySQLAdapter();
+        self::$db = DBComponent::$db;
+        $this->scenario = null;
     }
 
     /**
@@ -45,7 +46,7 @@ class DBModel
      */
     public function find(int $id): ?DBModel
     {
-        return $this->storage_adapter->find($id, $this->tableName(), get_class($this));
+        return self::$db->getStorageAdapter()->find($id, $this->tableName(), get_class($this));
     }
 
     /**
@@ -98,7 +99,7 @@ class DBModel
      */
     public function save(): bool
     {
-        return $this->storage_adapter->save($this, static::tableName());
+        return self::$db->getStorageAdapter()->save($this, static::tableName());
     }
 
     /**
@@ -141,7 +142,7 @@ class DBModel
      */
     public function findAll(): array
     {
-        return $this->storage_adapter->findAll($this->tableName());
+        return self::$db->getStorageAdapter()->findAll($this->tableName());
     }
 
     /**

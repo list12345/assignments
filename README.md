@@ -62,7 +62,7 @@ Defining AdapterInterface in di-container.php as MySQLAdapter:
         return new Users\models\MySQLAdapter('connection_string', 'username', 'password'); 
  },
 ```
-Then inside DBModel
+Then inside DBComponent
 ```php
  
     public function __construct(\Users\models\AdapterInterface $storage_adapter)
